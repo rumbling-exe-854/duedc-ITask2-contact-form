@@ -83,9 +83,6 @@ python -m pip install python-dotenv
 ```powershell
 python app.py
 ```
-Open the following URL in your browser:
-
-http://127.0.0.1:5000
 
 ## API Documentation
 
@@ -126,9 +123,6 @@ A successful submission returns HTTP status `201 Created`.
 
 **Method:** `GET`
 
-Open this URL in your browser while the application is running:
-
-http://127.0.0.1:5000/api/messages
 
 The endpoint returns saved contact records in JSON format, ordered from newest to oldest.
 
