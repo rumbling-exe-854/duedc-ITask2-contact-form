@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="container">
+    <div class="left">
+        <h1>Meet with Cameron</h1>
+        <p>Let us show you how Cypulse can transform the way <br>
+           you govern and share your sensitive data.</p>
+        
+        <img src="{{ url_for('static', filename='Corporate guy.jpg') }}" alt="Cameron Williamson">
+        <h3>Cameron Williamson</h3>
+        <p>Sales Manager</p>
+        
+        <!-- Updated to match the circular icon button from the reference design -->
+        <button type="button" class="circular-chat-btn" aria-label="Chat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+    </div>
+    
+    <div class="right">
+        <form id="contact-form">
+            <label for="full_name">Full Name <span class="required">*</span></label>
+            <input type="text" id="full_name" placeholder="Enter your name" required>
+            
+            <label for="company_name">Company Name <span class="required">*</span></label>
+            <input type="text" id="company_name" placeholder="Enter company name" required>
+            
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+            
+            <label for="phone">Phone <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="Enter your phone number" required>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="consent" required>
+                <label for="consent" class="consent-label">I agree that my personal data will be processed in accordance with the privacy policy <span class="required">*</span></label>
+            </div>
+            
+            <button type="submit" id="submit-btn">Send Message</button>
+            <div id="form-message" style="margin-top: 10px; font-size: 14px; font-weight: bold;"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submit-btn');
+    const formMessage = document.getElementById('form-message');
+    
+    const formData = {
+        full_name: document.getElementById('full_name').value,
+        company_name: document.getElementById('company_name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        consent: document.getElementById('consent').checked
+    };
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    formMessage.textContent = '';
+    
+    try {
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            formMessage.textContent = result.message;
+            formMessage.style.color = '#4ade80';
+            document.getElementById('contact-form').reset();
+        } else {
+            formMessage.textContent = result.message || 'Something went wrong.';
+            formMessage.style.color = '#f87171';
+        }
+    } catch (err) {
+        formMessage.textContent = 'Network error. Please try again.';
+        formMessage.style.color = '#f87171';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+    }
+});
+</script>
+
+{% endblock %}
